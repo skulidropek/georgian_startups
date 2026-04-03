@@ -1,50 +1,85 @@
 "use client"
 
+import type { Route } from "next"
 import Link from "next/link"
-import { useActionState } from "react"
-import { useFormStatus } from "react-dom"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 
-import {
-  type RegisterFormState,
-  registerAction
-} from "@/app/register/actions"
-
-const idleRegisterFormState: RegisterFormState = {
-  message: null
-}
-
-const SubmitButton = () => {
-  const { pending } = useFormStatus()
-
-  return (
-    <button className="button-link button-link--primary" type="submit">
-      {pending ? "Creating..." : "Create account"}
-    </button>
-  )
-}
+import { mapSupabaseAuthErrorMessage } from "@/lib/supabase/auth-messages"
+import { createClient } from "@/lib/supabase/client"
 
 export const RegisterForm = ({
   nextPath
 }: {
   readonly nextPath: string
 }) => {
-  const [state, formAction] = useActionState(
-    registerAction,
-    idleRegisterFormState
-  )
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [message, setMessage] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
+
+  const handleSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
+    event.preventDefault()
+
+    if (password !== confirmPassword) {
+      setMessage("Passwords do not match.")
+      return
+    }
+
+    const supabase = createClient()
+    setIsLoading(true)
+    setMessage(null)
+
+    try {
+      const emailRedirectTo = new URL("/auth/callback", window.location.origin)
+      emailRedirectTo.searchParams.set("next", nextPath)
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: emailRedirectTo.toString()
+        }
+      })
+
+      if (error) {
+        throw error
+      }
+
+      if (data.session) {
+        router.push(nextPath as Route)
+        router.refresh()
+        return
+      }
+
+      router.push(`/login?notice=confirmation-sent&next=${encodeURIComponent(nextPath)}`)
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? mapSupabaseAuthErrorMessage(error.message)
+          : "Could not create the account."
+      )
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
-    <form action={formAction} className="form-grid">
-      <input name="next" type="hidden" value={nextPath} />
-      {state.message ? <p className="alert">{state.message}</p> : null}
+    <form className="form-grid" onSubmit={handleSubmit}>
+      {message ? <p className="alert">{message}</p> : null}
       <div className="field">
         <label htmlFor="register-email">Email</label>
         <input
           autoComplete="email"
           id="register-email"
-          name="email"
+          onChange={(event) => setEmail(event.target.value)}
           required
           type="email"
+          value={email}
         />
         <p className="field__hint">
           This email will be used for sign in and confirmation.
@@ -55,9 +90,10 @@ export const RegisterForm = ({
         <input
           autoComplete="new-password"
           id="register-password"
-          name="password"
+          onChange={(event) => setPassword(event.target.value)}
           required
           type="password"
+          value={password}
         />
         <p className="field__hint">Use at least 8 characters.</p>
       </div>
@@ -66,14 +102,22 @@ export const RegisterForm = ({
         <input
           autoComplete="new-password"
           id="register-confirm-password"
-          name="confirmPassword"
+          onChange={(event) => setConfirmPassword(event.target.value)}
           required
           type="password"
+          value={confirmPassword}
         />
       </div>
       <div className="form-actions">
-        <SubmitButton />
-        <Link className="button-link button-link--secondary" href="/login">
+        <button className="button-link button-link--primary" disabled={isLoading} type="submit">
+          {isLoading ? "Creating..." : "Create account"}
+        </button>
+      </div>
+      <div className="form-actions">
+        <Link
+          className="button-link button-link--secondary"
+          href={`/login?next=${encodeURIComponent(nextPath)}`}
+        >
           Back to login
         </Link>
       </div>

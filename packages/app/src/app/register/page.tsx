@@ -1,5 +1,4 @@
 import type { Metadata } from "next"
-import Link from "next/link"
 import { redirect } from "next/navigation"
 
 import { RegisterForm } from "@/app/register/register-form"
@@ -36,14 +35,6 @@ export default async function RegisterPage({
         </p>
       </div>
       <RegisterForm nextPath={nextPath} />
-      <div className="form-actions">
-        <Link
-          className="button-link button-link--secondary"
-          href={`/login?next=${encodeURIComponent(nextPath)}`}
-        >
-          Back to login
-        </Link>
-      </div>
     </section>
   )
 }
