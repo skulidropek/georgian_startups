@@ -25,5 +25,6 @@ jobs:
         run: |
           pnpm dlx @prover-coder-ai/dist-deps-prune scan \
             --package ./packages/app/package.json \
+            --dist ./packages/app/.next \
             --prune-dev true \
             --silent
