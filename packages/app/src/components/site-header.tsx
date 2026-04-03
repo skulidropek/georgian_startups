@@ -17,12 +17,6 @@ export const SiteHeader = () => (
           {item.label}
         </Link>
       ))}
-      <Link className="site-nav__link" href="/login">
-        Login
-      </Link>
-      <Link className="site-nav__link" href="/register">
-        Register
-      </Link>
     </nav>
   </header>
 )
