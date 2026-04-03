@@ -1,6 +1,6 @@
 {
   "name": "@georgian-startups/app",
-  "version": "1.0.28",
+  "version": "1.0.29",
   "description": "Next.js App Router scaffold for the Georgian Startups catalog",
   "private": true,
   "directories": {
