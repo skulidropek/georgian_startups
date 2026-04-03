@@ -5,7 +5,6 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
-import { mapSupabaseAuthErrorMessage } from "@/lib/supabase/auth-messages"
 import { createClient } from "@/lib/supabase/client"
 
 export const RegisterForm = ({
@@ -35,30 +34,42 @@ export const RegisterForm = ({
     setMessage(null)
 
     try {
-      const emailRedirectTo = new URL("/auth/callback", window.location.origin)
-      emailRedirectTo.searchParams.set("next", nextPath)
+      const registerResponse = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json"
+        },
+        body: JSON.stringify({
+          email,
+          password
+        })
+      })
 
-      const { data, error } = await supabase.auth.signUp({
+      const registerResult = (await registerResponse.json()) as {
+        readonly message?: string
+      }
+
+      if (!registerResponse.ok) {
+        throw new Error(registerResult.message ?? "Could not create the account.")
+      }
+
+      const { error } = await supabase.auth.signInWithPassword({
         email,
-        password,
-        options: {
-          emailRedirectTo: emailRedirectTo.toString()
-        }
+        password
       })
 
       if (error) {
         throw error
       }
 
-      if (data.session) {
-        router.push(nextPath as Route)
-        router.refresh()
-        return
-      }
-
-      router.push(`/login?notice=confirmation-sent&next=${encodeURIComponent(nextPath)}`)
+      router.push(nextPath as Route)
+      router.refresh()
     } catch (error) {
-      setMessage(mapSupabaseAuthErrorMessage(error))
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Could not create the account."
+      )
     } finally {
       setIsLoading(false)
     }
@@ -75,6 +86,7 @@ export const RegisterForm = ({
           onChange={(event) => setEmail(event.target.value)}
           required
           type="email"
+          placeholder="founder@example.com"
           value={email}
         />
         <p className="field__hint">
@@ -89,6 +101,7 @@ export const RegisterForm = ({
           onChange={(event) => setPassword(event.target.value)}
           required
           type="password"
+          placeholder="At least 8 characters"
           value={password}
         />
         <p className="field__hint">Use at least 8 characters.</p>
