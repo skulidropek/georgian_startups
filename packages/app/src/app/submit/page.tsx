@@ -13,15 +13,15 @@ export default async function SubmitPage() {
 
   return (
     <section className="submit-shell">
-      <div className="page-intro">
-        <p className="submit-shell__eyebrow">Add startup</p>
-        <h1 className="page-title">Add a startup to the directory.</h1>
-        <p className="section-copy">
-          Keep the profile concise. Authentication and catalog persistence both
-          go directly through Supabase.
-        </p>
-      </div>
-      <div className="form-actions">
+      <div className="toolbar">
+        <div className="page-intro">
+          <p className="submit-shell__eyebrow">Add startup</p>
+          <h1 className="page-title">Add a startup to the directory.</h1>
+          <p className="section-copy">
+            Keep the profile concise. Authentication and catalog persistence both
+            go directly through Supabase.
+          </p>
+        </div>
         <form action={logoutAction}>
           <button className="button-link button-link--secondary" type="submit">
             Logout
