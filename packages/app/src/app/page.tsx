@@ -37,11 +37,11 @@ export default async function HomePage() {
     <section className="section-grid">
       <section className="section-card hero">
         <div className="hero__content">
-          <p className="eyebrow">Startup directory</p>
-          <h1>Browse startups. Add new ones through a protected form.</h1>
+          <p className="eyebrow">Georgian startup directory</p>
+          <h1>Simple catalog for browsing and submitting startups.</h1>
           <p className="lead">
-            Minimal interface for viewing companies and adding a new startup
-            without extra UI noise.
+            Open public startup profiles, review the essentials, and submit a
+            new company after sign in.
           </p>
           <div className="hero__actions">
             <Link className="button-link button-link--primary" href="/startups">
@@ -55,16 +55,16 @@ export default async function HomePage() {
         <div className="hero__panel">
           <div className="hero__stats">
             <div className="stat-row">
-              <span>Total startups</span>
+              <span>Published startups</span>
               <strong className="stat-row__value">{allStartups.length}</strong>
             </div>
             <div className="stat-row">
-              <span>Visible now</span>
+              <span>Featured right now</span>
               <strong className="stat-row__value">{featuredStartups.length}</strong>
             </div>
           </div>
           <p className="auth-note">
-            Adding a startup is protected by a basic login step.
+            Submission stays behind a basic auth step. Browsing stays public.
           </p>
           {catalogMessage ? <p className="alert">{catalogMessage}</p> : null}
         </div>
@@ -73,8 +73,8 @@ export default async function HomePage() {
       <section className="section-card">
         <div className="section-card__header">
           <div className="page-intro">
-            <p className="submit-shell__eyebrow">Latest startups</p>
-            <h2 className="page-title">Recent entries</h2>
+            <p className="submit-shell__eyebrow">Featured</p>
+            <h2 className="page-title">Current startup snapshot</h2>
           </div>
           <Link className="link-chip" href="/startups">
             See all
@@ -89,7 +89,7 @@ export default async function HomePage() {
             <div className="empty-state">
               {catalogMessage
                 ? "The catalog will appear here after Supabase becomes available."
-                : "No featured startups yet. Add one through the protected form."}
+                : "No featured startups yet. Add the first one through the protected form."}
             </div>
           )}
         </div>

@@ -32,16 +32,20 @@ export default async function StartupsPage() {
 
   return (
     <section className="section-grid">
-      <div className="toolbar">
-        <div className="page-intro">
-          <p className="submit-shell__eyebrow">Startups</p>
-          <h1 className="page-title">Simple public list of startups.</h1>
-          <p className="section-copy">
-            Open any entry to read details, traction, links, and current needs.
-          </p>
+      <section className="section-card">
+        <div className="toolbar">
+          <div className="page-intro">
+            <p className="submit-shell__eyebrow">Startups</p>
+            <h1 className="page-title">Public list of startups in the directory.</h1>
+            <p className="section-copy">
+              {startups.length > 0
+                ? `${startups.length} published startup${startups.length === 1 ? "" : "s"} available right now.`
+                : "Open any entry to review the essentials, traction, links, and current needs."}
+            </p>
+          </div>
         </div>
-      </div>
-      {catalogMessage ? <p className="alert">{catalogMessage}</p> : null}
+        {catalogMessage ? <p className="alert">{catalogMessage}</p> : null}
+      </section>
       {startups.length > 0 ? (
         <div className="startup-grid">
           {startups.map((startup) => (
