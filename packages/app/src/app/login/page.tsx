@@ -42,9 +42,10 @@ export default async function LoginPage({
     <section className="submit-shell">
       <div className="page-intro">
         <p className="submit-shell__eyebrow">Login</p>
-        <h1 className="page-title">Sign in to add a startup.</h1>
+        <h1 className="page-title">Sign in to submit a startup.</h1>
         <p className="section-copy">
-          Sign in with the email and password stored in Supabase Auth.
+          Use the account stored in Supabase Auth. Nothing extra is required on
+          this screen.
         </p>
       </div>
       {noticeMessage ? <p className="alert">{noticeMessage}</p> : null}

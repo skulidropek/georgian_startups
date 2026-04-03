@@ -31,8 +31,8 @@ export default async function RegisterPage({
         <p className="submit-shell__eyebrow">Register</p>
         <h1 className="page-title">Create a new account.</h1>
         <p className="section-copy">
-          Accounts are created in Supabase Auth. With the current project
-          settings, email confirmation is required before the first login.
+          Accounts are stored in Supabase Auth. If email confirmation is
+          enabled, confirm the address before the first sign in.
         </p>
       </div>
       <RegisterForm nextPath={nextPath} />

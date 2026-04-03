@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { cache } from "react"
 
 import { IndustryTags } from "@/components/industry-tags"
 import { StageBadge } from "@/components/stage-badge"
@@ -19,6 +20,16 @@ type StartupPageProps = {
 
 export const dynamic = "force-dynamic"
 
+const detailDateFormatter = new Intl.DateTimeFormat("en", {
+  month: "short",
+  day: "numeric",
+  year: "numeric"
+})
+
+const getPublishedStartupBySlug = cache(async (slug: string) =>
+  findPublishedStartupBySlug(slug)
+)
+
 export const generateMetadata = async ({
   params
 }: StartupPageProps): Promise<Metadata> => {
@@ -29,9 +40,7 @@ export const generateMetadata = async ({
   }
 
   const resolvedParams = await params
-  const startup = await findPublishedStartupBySlug(resolvedParams.slug).catch(
-    () => undefined
-  )
+  const startup = await getPublishedStartupBySlug(resolvedParams.slug).catch(() => undefined)
 
   if (!startup) {
     return {
@@ -61,7 +70,7 @@ export default async function StartupDetailsPage({
   const resolvedParams = await params
   const startup =
     catalogMessage === null
-      ? await findPublishedStartupBySlug(resolvedParams.slug).catch((error) => {
+      ? await getPublishedStartupBySlug(resolvedParams.slug).catch((error) => {
           catalogMessage = getStartupCatalogErrorMessage(error)
           return undefined
         })
@@ -91,18 +100,19 @@ export default async function StartupDetailsPage({
   return (
     <section className="section-grid">
       <div className="detail-hero">
+        <Link className="link-chip" href="/startups">
+          Back to startups
+        </Link>
         <div className="detail-meta">
           <StageBadge stage={startup.stage} />
           <span>{startup.market}</span>
+          <span>{detailDateFormatter.format(new Date(startup.createdAt))}</span>
         </div>
         <div>
           <h1>{startup.startupName}</h1>
           <p className="detail-hero__lead">{startup.tagline}</p>
         </div>
         <IndustryTags industries={startup.industries} />
-        <Link className="link-chip" href="/startups">
-          Back to startups
-        </Link>
       </div>
 
       <div className="detail-grid">
@@ -125,17 +135,22 @@ export default async function StartupDetailsPage({
             </ul>
           </div>
           <div className="detail-grid__panel">
-            <h2>Links</h2>
+            <h2>Links and contact</h2>
             {startup.websiteUrl ? (
               <p>
                 <a className="site-footer__link" href={startup.websiteUrl}>
-                  Website / MVP
+                  Website
                 </a>
               </p>
             ) : null}
             <p>
               <a className="site-footer__link" href={startup.pitchDeckUrl}>
                 Pitch deck
+              </a>
+            </p>
+            <p>
+              <a className="site-footer__link" href={`mailto:${startup.email}`}>
+                {startup.email}
               </a>
             </p>
           </div>

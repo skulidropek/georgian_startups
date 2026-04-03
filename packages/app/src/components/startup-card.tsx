@@ -4,12 +4,14 @@ import { IndustryTags } from "@/components/industry-tags"
 import { StageBadge } from "@/components/stage-badge"
 import type { StartupRecord } from "@/lib/startups"
 
+const launchDateFormatter = new Intl.DateTimeFormat("en", {
+  month: "short",
+  day: "numeric",
+  year: "numeric"
+})
+
 const formatLaunchDate = (createdAt: string): string =>
-  new Intl.DateTimeFormat("en", {
-    month: "short",
-    day: "numeric",
-    year: "numeric"
-  }).format(new Date(createdAt))
+  launchDateFormatter.format(new Date(createdAt))
 
 export const StartupCard = ({
   startup
@@ -31,9 +33,8 @@ export const StartupCard = ({
       <IndustryTags industries={startup.industries} />
     </div>
     <div className="startup-card__footer">
-      <p className="startup-card__label">Open startup</p>
       <Link className="link-chip" href={`/startups/${startup.slug}`}>
-        View startup
+        Open profile
       </Link>
     </div>
   </article>

@@ -16,10 +16,10 @@ export default async function SubmitPage() {
     <section className="submit-shell">
       <div className="page-intro">
         <p className="submit-shell__eyebrow">Add startup</p>
-        <h1 className="page-title">Create a new startup entry.</h1>
+        <h1 className="page-title">Add a startup to the directory.</h1>
         <p className="section-copy">
-          The form is intentionally simple. Auth and catalog persistence both
-          run directly through Supabase.
+          Keep the profile concise. Authentication and catalog persistence both
+          go directly through Supabase.
         </p>
       </div>
       <SubmitForm />
