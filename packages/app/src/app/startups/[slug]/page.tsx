@@ -4,6 +4,7 @@ import { notFound } from "next/navigation"
 
 import { IndustryTags } from "@/components/industry-tags"
 import { StageBadge } from "@/components/stage-badge"
+import { hasSupabaseConfig } from "@/lib/supabase/config"
 import { findPublishedStartupBySlug } from "@/lib/startup-store"
 
 type StartupPageProps = {
@@ -17,6 +18,12 @@ export const dynamic = "force-dynamic"
 export const generateMetadata = async ({
   params
 }: StartupPageProps): Promise<Metadata> => {
+  if (!hasSupabaseConfig()) {
+    return {
+      title: "Supabase setup required"
+    }
+  }
+
   const resolvedParams = await params
   const startup = await findPublishedStartupBySlug(resolvedParams.slug)
 
@@ -39,6 +46,26 @@ export const generateMetadata = async ({
 export default async function StartupDetailsPage({
   params
 }: StartupPageProps) {
+  if (!hasSupabaseConfig()) {
+    return (
+      <section className="submit-shell">
+        <div className="page-intro">
+          <p className="submit-shell__eyebrow">Setup required</p>
+          <h1 className="page-title">Supabase env is missing on this deploy.</h1>
+          <p className="section-copy">
+            Add `NEXT_PUBLIC_SUPABASE_URL` and
+            `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in Vercel, then redeploy.
+          </p>
+        </div>
+        <div className="form-actions">
+          <Link className="button-link button-link--secondary" href="/startups">
+            Back to startups
+          </Link>
+        </div>
+      </section>
+    )
+  }
+
   const resolvedParams = await params
   const startup = await findPublishedStartupBySlug(resolvedParams.slug)
 
