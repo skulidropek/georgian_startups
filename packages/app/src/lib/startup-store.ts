@@ -2,6 +2,7 @@ import type { PostgrestError } from "@supabase/supabase-js"
 
 import type { AuthenticatedUser } from "@/lib/auth"
 import type { Database } from "@/lib/supabase/database.types"
+import { hasSupabaseConfig } from "@/lib/supabase/config"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import {
   createUniqueSlug,
@@ -163,6 +164,10 @@ export const parseStartupSubmissionInput = (
 }
 
 export const listPublishedStartups = async (): Promise<Array<StartupRecord>> => {
+  if (!hasSupabaseConfig()) {
+    return []
+  }
+
   const supabase = await createSupabaseServerClient()
   const { data, error } = await supabase
     .from("startups")
@@ -180,6 +185,10 @@ export const listPublishedStartups = async (): Promise<Array<StartupRecord>> => 
 export const listFeaturedStartups = async (
   limit: number
 ): Promise<Array<StartupRecord>> => {
+  if (!hasSupabaseConfig()) {
+    return []
+  }
+
   const supabase = await createSupabaseServerClient()
   const { data, error } = await supabase
     .from("startups")
@@ -199,6 +208,10 @@ export const listFeaturedStartups = async (
 export const findPublishedStartupBySlug = async (
   slug: string
 ): Promise<StartupRecord | undefined> => {
+  if (!hasSupabaseConfig()) {
+    return undefined
+  }
+
   const supabase = await createSupabaseServerClient()
   const { data, error } = await supabase
     .from("startups")
@@ -218,6 +231,12 @@ export const createStartup = async (
   values: StartupFormValues,
   createdBy: AuthenticatedUser
 ): Promise<StartupRecord> => {
+  if (!hasSupabaseConfig()) {
+    throw new Error(
+      "Supabase is not configured yet. Add the required environment variables and redeploy."
+    )
+  }
+
   const validationMessage = validateStartupInput(values)
 
   if (validationMessage) {
