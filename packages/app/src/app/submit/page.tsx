@@ -1,6 +1,5 @@
 import type { Metadata } from "next"
 
-import { logoutAction } from "@/app/actions/logout"
 import { SubmitForm } from "@/app/submit/submit-form"
 import { requireAuthentication } from "@/lib/auth"
 
@@ -13,20 +12,13 @@ export default async function SubmitPage() {
 
   return (
     <section className="submit-shell">
-      <div className="toolbar">
-        <div className="page-intro">
-          <p className="submit-shell__eyebrow">Add startup</p>
-          <h1 className="page-title">Add a startup to the directory.</h1>
-          <p className="section-copy">
-            Keep the profile concise. Authentication and catalog persistence both
-            go directly through Supabase.
-          </p>
-        </div>
-        <form action={logoutAction}>
-          <button className="button-link button-link--secondary" type="submit">
-            Logout
-          </button>
-        </form>
+      <div className="page-intro">
+        <p className="submit-shell__eyebrow">Add startup</p>
+        <h1 className="page-title">Add a startup to the directory.</h1>
+        <p className="section-copy">
+          Keep the profile concise. Authentication and catalog persistence both
+          go directly through Supabase.
+        </p>
       </div>
       <SubmitForm />
     </section>
