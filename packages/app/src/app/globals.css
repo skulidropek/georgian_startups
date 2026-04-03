@@ -129,6 +129,17 @@ button {
   color: var(--text);
 }
 
+.site-nav__link:focus-visible,
+.site-nav__button:focus-visible,
+.button-link:focus-visible,
+.link-chip:focus-visible,
+.site-footer__link:focus-visible {
+  outline: 2px solid #d9d9d2;
+  outline-offset: 2px;
+  border-color: var(--line-strong);
+  color: var(--text);
+}
+
 .site-nav__button {
   background: transparent;
 }
