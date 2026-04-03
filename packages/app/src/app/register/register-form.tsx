@@ -58,11 +58,7 @@ export const RegisterForm = ({
 
       router.push(`/login?notice=confirmation-sent&next=${encodeURIComponent(nextPath)}`)
     } catch (error) {
-      setMessage(
-        error instanceof Error
-          ? mapSupabaseAuthErrorMessage(error.message)
-          : "Could not create the account."
-      )
+      setMessage(mapSupabaseAuthErrorMessage(error))
     } finally {
       setIsLoading(false)
     }
