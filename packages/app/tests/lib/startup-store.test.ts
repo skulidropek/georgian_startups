@@ -1,94 +1,93 @@
-import fs from "node:fs"
-import path from "node:path"
-import os from "node:os"
-
 import { describe, expect, it } from "vitest"
 
-import { createStartupStore } from "../../src/lib/startup-store"
+import {
+  parseStartupSubmissionInput,
+  validateStartupInput
+} from "../../src/lib/startup-store"
 
-const createTempStorePath = (): string => {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), "gs-startup-store-"))
-  return path.join(directory, "startups.json")
-}
+describe("startup store helpers", () => {
+  it("parses submission input and normalizes an unknown stage", () => {
+    const formData = new FormData()
 
-describe("startup store", () => {
-  it("persists submissions to a local json file", async () => {
-    const filePath = createTempStorePath()
-    const store = createStartupStore({ filePath })
+    formData.set("startupName", "Port Nova")
+    formData.set("tagline", "Logistics OS")
+    formData.set("stage", "unknown-stage")
+    formData.set("market", "Logistics")
+    formData.set("industriesRaw", "supply chain, b2b")
+    formData.set("about", "Simple description")
+    formData.set("traction", "3 pilots")
+    formData.set("request", "Looking for angels")
+    formData.set("needsRaw", "intro to shippers\nintro to ports")
+    formData.set("websiteUrl", "https://portnova.example")
+    formData.set("pitchDeckUrl", "https://portnova.example/deck")
+    formData.set("email", "hello@portnova.example")
 
-    const saved = await store.add(
-      {
-        startupName: "Port Nova",
-        tagline: "Logistics OS",
-        stage: "seed",
-        market: "Logistics",
-        traction: "3 pilots",
-        request: "Looking for angels",
-        industriesRaw: "supply chain, b2b",
-        about: "Simple description",
-        needsRaw: "intro to shippers\nintro to ports",
-        websiteUrl: "https://portnova.example",
-        pitchDeckUrl: "https://portnova.example/deck",
-        email: "hello@portnova.example"
-      },
-      {
-        id: "user-1",
-        email: "founder@example.com"
-      }
-    )
-
-    expect(saved.slug).toBe("port-nova")
-    expect(store.list()).toHaveLength(1)
-    expect(JSON.parse(fs.readFileSync(filePath, "utf8"))).toHaveLength(1)
+    expect(parseStartupSubmissionInput(formData)).toEqual({
+      startupName: "Port Nova",
+      tagline: "Logistics OS",
+      stage: "pre-seed",
+      market: "Logistics",
+      industriesRaw: "supply chain, b2b",
+      about: "Simple description",
+      traction: "3 pilots",
+      request: "Looking for angels",
+      needsRaw: "intro to shippers\nintro to ports",
+      websiteUrl: "https://portnova.example",
+      pitchDeckUrl: "https://portnova.example/deck",
+      email: "hello@portnova.example"
+    })
   })
 
-  it("generates a unique slug for duplicate startup names", async () => {
-    const filePath = createTempStorePath()
-    const store = createStartupStore({ filePath })
-
-    const first = await store.add(
-      {
+  it("validates required fields, email, and urls", () => {
+    expect(
+      validateStartupInput({
         startupName: "Port Nova",
         tagline: "Logistics OS",
         stage: "seed",
         market: "Logistics",
-        traction: "3 pilots",
-        request: "Looking for angels",
         industriesRaw: "supply chain",
         about: "Simple description",
+        traction: "3 pilots",
+        request: "Looking for angels",
+        needsRaw: "intro to shippers",
+        websiteUrl: "notaurl",
+        pitchDeckUrl: "https://portnova.example/deck",
+        email: "hello@portnova.example"
+      })
+    ).toBe("Website URL must be valid.")
+
+    expect(
+      validateStartupInput({
+        startupName: "Port Nova",
+        tagline: "Logistics OS",
+        stage: "seed",
+        market: "Logistics",
+        industriesRaw: "supply chain",
+        about: "Simple description",
+        traction: "3 pilots",
+        request: "Looking for angels",
+        needsRaw: "intro to shippers",
+        websiteUrl: "https://portnova.example",
+        pitchDeckUrl: "https://portnova.example/deck",
+        email: "bad-email"
+      })
+    ).toBe("Enter a valid contact email.")
+
+    expect(
+      validateStartupInput({
+        startupName: "Port Nova",
+        tagline: "Logistics OS",
+        stage: "seed",
+        market: "Logistics",
+        industriesRaw: "supply chain",
+        about: "Simple description",
+        traction: "3 pilots",
+        request: "Looking for angels",
         needsRaw: "intro to shippers",
         websiteUrl: "https://portnova.example",
         pitchDeckUrl: "https://portnova.example/deck",
         email: "hello@portnova.example"
-      },
-      {
-        id: "user-1",
-        email: "founder@example.com"
-      }
-    )
-
-    const second = await store.add(
-      {
-        startupName: "Port Nova",
-        tagline: "Another listing",
-        stage: "seed",
-        market: "Logistics",
-        traction: "5 pilots",
-        request: "More angels",
-        industriesRaw: "supply chain",
-        about: "Another description",
-        needsRaw: "intro to ports",
-        websiteUrl: "https://portnova.example",
-        pitchDeckUrl: "https://portnova.example/deck",
-        email: "hello@portnova.example"
-      },
-      {
-        id: "user-1",
-        email: "founder@example.com"
-      }
-    )
-
-    expect(first.slug).toBe("port-nova")
-    expect(second.slug).toBe("port-nova-2")
+      })
+    ).toBeNull()
   })
 })
