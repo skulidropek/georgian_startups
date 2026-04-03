@@ -42,15 +42,18 @@ export default async function LoginPage({
         <p className="submit-shell__eyebrow">Login</p>
         <h1 className="page-title">Sign in to submit a startup.</h1>
         <p className="section-copy">
-          Use the account stored in Supabase Auth. Nothing extra is required on
-          this screen.
+          Use your account to continue. If you do not have one yet, create it
+          first and return straight to the submission form.
         </p>
       </div>
       {noticeMessage ? <p className="alert">{noticeMessage}</p> : null}
       {errorMessage ? <p className="alert">{errorMessage}</p> : null}
       <LoginForm nextPath={nextPath} />
       <div className="form-actions">
-        <Link className="button-link button-link--secondary" href="/register">
+        <Link
+          className="button-link button-link--secondary"
+          href={`/register?next=${encodeURIComponent(nextPath)}`}
+        >
           Create account
         </Link>
       </div>
