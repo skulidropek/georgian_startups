@@ -18,9 +18,8 @@ export default async function SubmitPage() {
         <p className="submit-shell__eyebrow">Add startup</p>
         <h1 className="page-title">Create a new startup entry.</h1>
         <p className="section-copy">
-          The form is intentionally simple. Auth runs through Supabase, and the
-          catalog switches to the Supabase table as soon as that schema is
-          applied.
+          The form is intentionally simple. Auth and catalog persistence both
+          run directly through Supabase.
         </p>
       </div>
       <SubmitForm />

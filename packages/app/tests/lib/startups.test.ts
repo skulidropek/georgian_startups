@@ -6,7 +6,6 @@ import {
   isValidUrl,
   normalizeCommaSeparated,
   normalizeLineSeparated,
-  seedStartups,
   slugifyStartupName
 } from "../../src/lib/startups"
 
@@ -18,7 +17,7 @@ describe("startup helpers", () => {
   it("creates a unique slug when the base one already exists", () => {
     const slug = createUniqueSlug(
       "AtlasFreight",
-      new Set(seedStartups.map((startup) => startup.slug))
+      new Set(["atlasfreight", "orchardos", "clinicmesh"])
     )
 
     expect(slug).toBe("atlasfreight-2")
