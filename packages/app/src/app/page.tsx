@@ -1,19 +1,37 @@
 import Link from "next/link"
 
 import { StartupCard } from "@/components/startup-card"
+import {
+  getStartupCatalogErrorMessage,
+  missingStartupCatalogConfigMessage
+} from "@/lib/startup-catalog-errors"
 import { hasSupabaseConfig } from "@/lib/supabase/config"
 import {
   listFeaturedStartups,
   listPublishedStartups
 } from "@/lib/startup-store"
+import type { StartupRecord } from "@/lib/startups"
 
 export const dynamic = "force-dynamic"
 
 export default async function HomePage() {
   const isSupabaseReady = hasSupabaseConfig()
-  const [featuredStartups, allStartups] = isSupabaseReady
-    ? await Promise.all([listFeaturedStartups(2), listPublishedStartups()])
-    : [[], []]
+  let catalogMessage: string | null = isSupabaseReady
+    ? null
+    : missingStartupCatalogConfigMessage
+  let featuredStartups: Array<StartupRecord> = []
+  let allStartups: Array<StartupRecord> = []
+
+  if (isSupabaseReady) {
+    try {
+      ;[featuredStartups, allStartups] = await Promise.all([
+        listFeaturedStartups(2),
+        listPublishedStartups()
+      ])
+    } catch (error) {
+      catalogMessage = getStartupCatalogErrorMessage(error)
+    }
+  }
 
   return (
     <section className="section-grid">
@@ -48,13 +66,7 @@ export default async function HomePage() {
           <p className="auth-note">
             Adding a startup is protected by a basic login step.
           </p>
-          {!isSupabaseReady ? (
-            <p className="alert">
-              This deployment is missing Supabase environment variables. Add
-              `NEXT_PUBLIC_SUPABASE_URL` and
-              `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in Vercel, then redeploy.
-            </p>
-          ) : null}
+          {catalogMessage ? <p className="alert">{catalogMessage}</p> : null}
         </div>
       </section>
 
@@ -75,7 +87,9 @@ export default async function HomePage() {
             ))
           ) : (
             <div className="empty-state">
-              No featured startups yet. Add one through the protected form.
+              {catalogMessage
+                ? "The catalog will appear here after Supabase becomes available."
+                : "No featured startups yet. Add one through the protected form."}
             </div>
           )}
         </div>
