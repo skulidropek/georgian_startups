@@ -1,4 +1,5 @@
 import { createServerClient } from "@supabase/ssr"
+import { createClient as createSupabaseClient } from "@supabase/supabase-js"
 import { cookies } from "next/headers"
 
 import type { Database } from "@/lib/supabase/database.types"
@@ -27,3 +28,15 @@ export const createSupabaseServerClient = async () => {
 }
 
 export const createClient = createSupabaseServerClient
+
+export const createSupabaseReadClient = () => {
+  const { publishableKey, url } = getSupabaseConfig()
+
+  return createSupabaseClient<Database>(url, publishableKey, {
+    auth: {
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+      persistSession: false
+    }
+  })
+}

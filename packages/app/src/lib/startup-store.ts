@@ -3,7 +3,10 @@ import type { PostgrestError } from "@supabase/supabase-js"
 import type { AuthenticatedUser } from "@/lib/auth"
 import type { Database } from "@/lib/supabase/database.types"
 import { hasSupabaseConfig } from "@/lib/supabase/config"
-import { createSupabaseServerClient } from "@/lib/supabase/server"
+import {
+  createSupabaseReadClient,
+  createSupabaseServerClient
+} from "@/lib/supabase/server"
 import {
   createUniqueSlug,
   isStartupStage,
@@ -168,7 +171,7 @@ export const listPublishedStartups = async (): Promise<Array<StartupRecord>> => 
     return []
   }
 
-  const supabase = await createSupabaseServerClient()
+  const supabase = createSupabaseReadClient()
   const { data, error } = await supabase
     .from("startups")
     .select("*")
@@ -189,7 +192,7 @@ export const listFeaturedStartups = async (
     return []
   }
 
-  const supabase = await createSupabaseServerClient()
+  const supabase = createSupabaseReadClient()
   const { data, error } = await supabase
     .from("startups")
     .select("*")
@@ -212,7 +215,7 @@ export const findPublishedStartupBySlug = async (
     return undefined
   }
 
-  const supabase = await createSupabaseServerClient()
+  const supabase = createSupabaseReadClient()
   const { data, error } = await supabase
     .from("startups")
     .select("*")
