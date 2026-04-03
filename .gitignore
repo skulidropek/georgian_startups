@@ -2,9 +2,17 @@ node_modules/
 dist/
 build/
 coverage/
+.next/
+.env*
+.env.local
+packages/*/.env.local
+*.tsbuildinfo
 packages/*/dist/
+packages/*/.next/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 reports/
+!.env.example
+!packages/*/.env.example

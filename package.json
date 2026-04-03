@@ -1,25 +1,25 @@
 {
-  "name": "effect-template-workspace",
+  "name": "georgian-startups-workspace",
   "version": "1.0.0",
   "private": true,
-  "description": "Monorepo workspace for effect-template",
+  "description": "Monorepo workspace for the Georgian Startups web application",
   "packageManager": "pnpm@10.29.3",
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "build": "pnpm --filter @effect-template/app build",
-    "check": "pnpm --filter @effect-template/app check",
+    "build": "pnpm --filter @georgian-startups/app build",
+    "check": "pnpm --filter @georgian-startups/app check",
     "changeset": "changeset",
     "changeset-publish": "node -e \"if (!process.env.NPM_TOKEN) { console.log('Skipping publish: NPM_TOKEN is not set'); process.exit(0); }\" && changeset publish",
     "changeset-version": "changeset version",
-    "dev": "pnpm --filter @effect-template/app dev",
-    "lint": "pnpm --filter @effect-template/app lint",
-    "lint:tests": "pnpm --filter @effect-template/app lint:tests",
-    "lint:effect": "pnpm --filter @effect-template/app lint:effect",
-    "test": "pnpm --filter @effect-template/app test",
-    "typecheck": "pnpm --filter @effect-template/app typecheck",
-    "start": "pnpm --filter @effect-template/app start"
+    "dev": "pnpm --filter @georgian-startups/app dev",
+    "lint": "pnpm --filter @georgian-startups/app lint",
+    "lint:tests": "pnpm --filter @georgian-startups/app lint:tests",
+    "lint:effect": "pnpm --filter @georgian-startups/app lint:effect",
+    "test": "pnpm --filter @georgian-startups/app test",
+    "typecheck": "pnpm --filter @georgian-startups/app typecheck",
+    "start": "pnpm --filter @georgian-startups/app start"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.2",
@@ -27,12 +27,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ProverCoderAI/effect-template.git"
+    "url": "git+https://github.com/skulidropek/georgian_startups.git"
   },
   "bugs": {
-    "url": "https://github.com/ProverCoderAI/effect-template/issues"
+    "url": "https://github.com/skulidropek/georgian_startups/issues"
   },
-  "homepage": "https://github.com/ProverCoderAI/effect-template#readme",
+  "homepage": "https://github.com/skulidropek/georgian_startups#readme",
   "license": "ISC",
   "pnpm": {
     "ignoredBuiltDependencies": [
