@@ -1,10 +1,19 @@
 import { createBrowserClient } from "@supabase/ssr"
+import type { SupabaseClient } from "@supabase/supabase-js"
 
 import type { Database } from "@/lib/supabase/database.types"
-import { requireSupabaseConfig } from "@/lib/supabase/config"
+import { getSupabaseConfig } from "@/lib/supabase/config"
 
-export const createClient = () => {
-  const config = requireSupabaseConfig()
+let browserClient: SupabaseClient<Database> | undefined
 
-  return createBrowserClient<Database>(config.url, config.publishableKey)
+export const createClient = (): SupabaseClient<Database> => {
+  if (browserClient) {
+    return browserClient
+  }
+
+  const { publishableKey, url } = getSupabaseConfig()
+
+  browserClient = createBrowserClient<Database>(url, publishableKey)
+
+  return browserClient
 }
