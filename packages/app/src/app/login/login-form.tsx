@@ -41,11 +41,7 @@ export const LoginForm = ({
       router.push(nextPath as Route)
       router.refresh()
     } catch (error) {
-      setMessage(
-        error instanceof Error
-          ? mapSupabaseAuthErrorMessage(error.message)
-          : "Could not sign in."
-      )
+      setMessage(mapSupabaseAuthErrorMessage(error))
     } finally {
       setIsLoading(false)
     }
