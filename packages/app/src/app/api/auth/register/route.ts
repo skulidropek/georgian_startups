@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 
 import { createSupabaseAdminClient } from "@/lib/supabase/admin"
+import { createSupabaseServerClient } from "@/lib/supabase/server"
 import { isValidEmail } from "@/lib/startups"
 
 type RegisterRequestBody = {
@@ -61,6 +62,16 @@ export const POST = async (request: Request): Promise<Response> => {
 
     if (error) {
       return jsonError(mapAdminAuthError(error.message), 400)
+    }
+
+    const sessionClient = await createSupabaseServerClient()
+    const { error: signInError } = await sessionClient.auth.signInWithPassword({
+      email,
+      password
+    })
+
+    if (signInError) {
+      return jsonError(signInError.message, 400)
     }
 
     return NextResponse.json({ ok: true })

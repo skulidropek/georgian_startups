@@ -5,9 +5,6 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
-import { mapSupabaseAuthErrorMessage } from "@/lib/supabase/auth-messages"
-import { createClient } from "@/lib/supabase/client"
-
 export const LoginForm = ({
   nextPath
 }: {
@@ -24,24 +21,35 @@ export const LoginForm = ({
   ): Promise<void> => {
     event.preventDefault()
 
-    const supabase = createClient()
     setIsLoading(true)
     setMessage(null)
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password
+      const loginResponse = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json"
+        },
+        body: JSON.stringify({
+          email,
+          password
+        })
       })
 
-      if (error) {
-        throw error
+      const loginResult = (await loginResponse.json()) as {
+        readonly message?: string
+      }
+
+      if (!loginResponse.ok) {
+        throw new Error(loginResult.message ?? "Authentication failed.")
       }
 
       router.push(nextPath as Route)
       router.refresh()
     } catch (error) {
-      setMessage(mapSupabaseAuthErrorMessage(error))
+      setMessage(
+        error instanceof Error ? error.message : "Authentication failed."
+      )
     } finally {
       setIsLoading(false)
     }

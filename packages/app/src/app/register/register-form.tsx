@@ -5,8 +5,6 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
-import { createClient } from "@/lib/supabase/client"
-
 export const RegisterForm = ({
   nextPath
 }: {
@@ -29,7 +27,6 @@ export const RegisterForm = ({
       return
     }
 
-    const supabase = createClient()
     setIsLoading(true)
     setMessage(null)
 
@@ -51,15 +48,6 @@ export const RegisterForm = ({
 
       if (!registerResponse.ok) {
         throw new Error(registerResult.message ?? "Could not create the account.")
-      }
-
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      })
-
-      if (error) {
-        throw error
       }
 
       router.push(nextPath as Route)
